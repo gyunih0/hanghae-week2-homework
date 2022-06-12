@@ -1,11 +1,9 @@
 package com.sparta.week02homework.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.week02homework.dto.SignupUserDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,10 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -39,6 +39,11 @@ public class Users implements UserDetails {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRole roles;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Board> boardList = new ArrayList<>();
+
 
 
     public Users(SignupUserDto userDto) {
