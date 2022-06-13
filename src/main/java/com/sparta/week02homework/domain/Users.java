@@ -40,9 +40,15 @@ public class Users implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private UserRole roles;
 
+    // Board 연관관계 설정
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Board> boardList = new ArrayList<>();
+
+    // Favorite 연관관계 설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Favorite> favorites = new ArrayList<>();
 
 
 
