@@ -2,6 +2,7 @@ package com.sparta.week02homework.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.week02homework.dto.BoardDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -23,6 +26,7 @@ public class Board extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // UserId
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
@@ -37,6 +41,12 @@ public class Board extends Timestamped{
 
     @Column(nullable = false)
     private int viewCount = 0;
+
+
+    // Favorite 연관관계
+    @JsonManagedReference
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Favorite> favorites = new ArrayList<>();
 
 
     public Board(BoardDto boardDto) {

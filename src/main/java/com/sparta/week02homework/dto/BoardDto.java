@@ -1,6 +1,7 @@
 package com.sparta.week02homework.dto;
 
 import com.sparta.week02homework.domain.Board;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BoardDto {
     private String title;
     private String body;
