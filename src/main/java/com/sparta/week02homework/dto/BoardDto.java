@@ -13,7 +13,11 @@ import lombok.Setter;
 public class BoardDto {
     private String title;
     private String body;
+
+    private int template;
     private int viewCount;
+
+
 
 
     /**

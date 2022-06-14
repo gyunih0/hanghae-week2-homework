@@ -36,12 +36,18 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     private String body;
 
     @Column(nullable = false)
     private int viewCount = 0;
 
+
+    @Column(nullable = false)
+    private int template;
+
+    @Column(nullable = false)
+    private int likeCount = 0;
 
     // Favorite 연관관계
     @JsonManagedReference
@@ -53,15 +59,26 @@ public class Board extends Timestamped{
         this.title = boardDto.getTitle();
         this.body = boardDto.getBody();
         this.viewCount = boardDto.getViewCount();
+        this.template = boardDto.getTemplate();
     }
 
+    // @RequestBody BoardDto로 업데이트
     public void update(BoardDto boardDto) {
         this.title = boardDto.getTitle();
         this.body = boardDto.getBody();
         this.viewCount = boardDto.getViewCount();
+        this.template = boardDto.getTemplate();
     }
 
+    // FavoriteService에서 likeCount로 업데이트
+    public void update(int likeCount) {
+        this.likeCount = likeCount;
+    }
 
+    /**
+     * User 연관관계 Method
+     * @param user
+     */
     public void setUser(Users user) {
         this.user = user;
         user.getBoardList().add(this);
