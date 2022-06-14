@@ -5,9 +5,7 @@ import com.sparta.week02homework.domain.Board;
 import com.sparta.week02homework.domain.Users;
 import com.sparta.week02homework.dto.BoardDto;
 import com.sparta.week02homework.repository.BoardRepository;
-import com.sparta.week02homework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +15,9 @@ import java.util.List;
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
 
-    public List<Board> findBoards() {
-        return boardRepository.findAll();
-    }
 
     public Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
@@ -30,36 +25,68 @@ public class BoardService {
         );
     }
 
+
+
+    /**
+     * Board CRUD 관련 Methods
+     */
+
+    // Board 전체 GET
+    public List<Board> findBoards() {
+        return boardRepository.findAll();
+    }
+
+    // Board 한개 GET
     @Transactional
     public BoardDto findOneBoard(Long boardId) {
         Board board = findBoardById(boardId);
+
         BoardDto boardDto = new BoardDto(board); // viewCount ++
         board.update(boardDto);
+
         return boardDto;
     }
 
+    // POST new Board
     public String createBoard(Users userDetails, BoardDto boardDto) {
-        Users user = userRepository.findByEmail(userDetails.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-
+        Users user = userService.findUserByAuthUser(userDetails);
         Board board = new Board(boardDto);
+
         board.setUser(user);
         boardRepository.save(board);
-        return "[" + boardDto.getTitle() + "] 생성 완료";
+
+        return "생성 완료";
     }
 
-
-    public String deleteBoardById(Long boardId) {
-        Board board = findBoardById(boardId); //있나 없나 확인
-        boardRepository.deleteById(boardId);
-        return "[" + board.getTitle() + "] 삭제 완료";
-    }
-
+    // PUT Board update
     @Transactional
     public String update(Long boardId, BoardDto boardDto) {
         Board board = findBoardById(boardId);
+
         boardDto.setViewCount(board.getViewCount());
         board.update(boardDto);
-        return "[" + board.getTitle() + "] 수정 완료";
+
+        return "수정 완료";
     }
+
+    // DELETE Board
+    public String deleteBoardById(Long boardId) {
+        findBoardById(boardId); //있나 없나 확인
+        boardRepository.deleteById(boardId);
+
+        return "삭제 완료";
+    }
+
+
+    /**
+     * like 관련 method
+     */
+
+    @Transactional
+    public int updateLikeCount(Board board, int likeCount) {
+        board.update(likeCount);
+        return likeCount;
+    }
+
+
 }
