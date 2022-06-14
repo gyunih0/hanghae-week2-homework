@@ -3,12 +3,16 @@ package com.sparta.week02homework.service;
 
 import com.sparta.week02homework.domain.Board;
 import com.sparta.week02homework.domain.Users;
-import com.sparta.week02homework.dto.BoardDto;
+import com.sparta.week02homework.dto.BoardRequestDto;
+import com.sparta.week02homework.dto.BoardResponseDto;
 import com.sparta.week02homework.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -18,7 +22,6 @@ public class BoardService {
     private final UserService userService;
 
 
-
     public Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다.")
@@ -26,31 +29,35 @@ public class BoardService {
     }
 
 
-
     /**
      * Board CRUD 관련 Methods
      */
 
     // Board 전체 GET
-    public List<Board> findBoards() {
-        return boardRepository.findAll();
+    public List<BoardResponseDto> findBoards() {
+        List<Board> boards = boardRepository.findAll();
+        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
+        for (Board board : boards) {
+            boardResponseDtos.add(new BoardResponseDto(board));
+        }
+        return boardResponseDtos;
     }
 
     // Board 한개 GET
     @Transactional
-    public BoardDto findOneBoard(Long boardId) {
+    public BoardResponseDto findOneBoard(Long boardId) {
         Board board = findBoardById(boardId);
 
-        BoardDto boardDto = new BoardDto(board); // viewCount ++
-        board.update(boardDto);
+        BoardRequestDto boardRequestDto = new BoardRequestDto(board); // viewCount ++
+        board.update(boardRequestDto);
 
-        return boardDto;
+        return new BoardResponseDto(board);
     }
 
     // POST new Board
-    public String createBoard(Users userDetails, BoardDto boardDto) {
+    public String createBoard(@AuthenticationPrincipal Users userDetails, @RequestBody BoardRequestDto boardRequestDto) {
         Users user = userService.findUserByAuthUser(userDetails);
-        Board board = new Board(boardDto);
+        Board board = new Board(boardRequestDto);
 
         board.setUser(user);
         boardRepository.save(board);
@@ -60,11 +67,11 @@ public class BoardService {
 
     // PUT Board update
     @Transactional
-    public String update(Long boardId, BoardDto boardDto) {
+    public String update(Long boardId, BoardRequestDto boardRequestDto) {
         Board board = findBoardById(boardId);
 
-        boardDto.setViewCount(board.getViewCount());
-        board.update(boardDto);
+        boardRequestDto.setViewCount(board.getViewCount());
+        board.update(boardRequestDto);
 
         return "수정 완료";
     }
@@ -87,6 +94,8 @@ public class BoardService {
         board.update(likeCount);
         return likeCount;
     }
+
+
 
 
 }
