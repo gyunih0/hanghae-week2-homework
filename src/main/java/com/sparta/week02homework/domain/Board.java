@@ -3,7 +3,7 @@ package com.sparta.week02homework.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.sparta.week02homework.dto.BoardDto;
+import com.sparta.week02homework.dto.BoardRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,12 +42,15 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private int viewCount = 0;
 
-
     @Column(nullable = false)
     private int template;
 
     @Column(nullable = false)
     private int likeCount = 0;
+
+    @Column
+    private String img_url;
+
 
     // Favorite 연관관계
     @JsonManagedReference
@@ -55,25 +58,26 @@ public class Board extends Timestamped{
     private List<Favorite> favorites = new ArrayList<>();
 
 
-    public Board(BoardDto boardDto) {
-        this.title = boardDto.getTitle();
-        this.body = boardDto.getBody();
-        this.viewCount = boardDto.getViewCount();
-        this.template = boardDto.getTemplate();
+    public Board(BoardRequestDto boardRequestDto) {
+        this.title = boardRequestDto.getTitle();
+        this.body = boardRequestDto.getBody();
+        this.viewCount = boardRequestDto.getViewCount();
+        this.template = boardRequestDto.getTemplate();
     }
 
     // @RequestBody BoardDto로 업데이트
-    public void update(BoardDto boardDto) {
-        this.title = boardDto.getTitle();
-        this.body = boardDto.getBody();
-        this.viewCount = boardDto.getViewCount();
-        this.template = boardDto.getTemplate();
+    public void update(BoardRequestDto boardRequestDto) {
+        this.title = boardRequestDto.getTitle();
+        this.body = boardRequestDto.getBody();
+        this.viewCount = boardRequestDto.getViewCount();
+        this.template = boardRequestDto.getTemplate();
     }
 
     // FavoriteService에서 likeCount로 업데이트
     public void update(int likeCount) {
         this.likeCount = likeCount;
     }
+
 
     /**
      * User 연관관계 Method
