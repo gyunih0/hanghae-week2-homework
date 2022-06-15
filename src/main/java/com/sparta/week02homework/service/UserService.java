@@ -22,18 +22,28 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+
     /**
      * Authentication(JWT Token) 으로 부터 User 정보 찾기
-     * @param userDetails
-     * @return Users
      */
     public Users findUserByAuthUser(Users userDetails) {
         return userRepository.findByEmail(userDetails.getEmail()).orElseThrow(
                 () -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.")
         );
     }
+    public void loginCheck(Users userDetails) {
+        System.out.println(userDetails);
+        if(userDetails == null){
+            throw new IllegalArgumentException("로그인이 필요합니다");
+        }
+    }
 
 
+    /**
+     * 회원 가입
+     * @param userDto
+     * @return
+     */
     public Long join(SignupUserDto userDto) {
 
         // 회원 ID 중복 확인
@@ -42,7 +52,6 @@ public class UserService {
         if (found.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
         }
-
 
         Users user = Users.builder()
                 .email(userDto.getEmail())
@@ -54,6 +63,12 @@ public class UserService {
         return userRepository.save(user).getId();
     }
 
+
+    /**
+     * 로그인
+     * @param user
+     * @return
+     */
     public String login(Map<String, String> user) {
         Users member = userRepository.findByEmail(user.get("email"))
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
@@ -62,6 +77,5 @@ public class UserService {
         }
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
-
 
 }
