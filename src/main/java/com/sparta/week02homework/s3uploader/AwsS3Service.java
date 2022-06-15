@@ -42,17 +42,20 @@ public class AwsS3Service {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
         }
 
-
         return String.format("https://%s.s3.amazonaws.com/%s", bucket, fileName);
     }
 
-    public void deleteFile(String fileName) {
+
+    public void deleteFile(String imgUrl) {
+        String fileName = imgUrl.split("/")[3];
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
+
 
     private String createFileName(String fileName) { // 먼저 파일 업로드 시, 파일명을 난수화하기 위해 random으로 돌립니다.
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
+
 
     private String getFileExtension(String fileName) { // file 형식이 잘못된 경우를 확인하기 위해 만들어진 로직이며, 파일 타입과 상관없이 업로드할 수 있게 하기 위해 .의 존재 유무만 판단하였습니다.
         try {
