@@ -6,11 +6,11 @@ import com.sparta.week02homework.domain.Users;
 import com.sparta.week02homework.dto.BoardRequestDto;
 import com.sparta.week02homework.dto.BoardResponseDto;
 import com.sparta.week02homework.repository.BoardRepository;
+import com.sparta.week02homework.s3uploader.AwsS3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserService userService;
-
+    private final AwsS3Service s3Service;
 
     public Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
@@ -36,11 +36,11 @@ public class BoardService {
     // Board 전체 GET
     public List<BoardResponseDto> findBoards() {
         List<Board> boards = boardRepository.findAll();
-        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
+        List<BoardResponseDto> boardResponseDto = new ArrayList<>();
         for (Board board : boards) {
-            boardResponseDtos.add(new BoardResponseDto(board));
+            boardResponseDto.add(new BoardResponseDto(board));
         }
-        return boardResponseDtos;
+        return boardResponseDto;
     }
 
     // Board 한개 GET
@@ -55,9 +55,15 @@ public class BoardService {
     }
 
     // POST new Board
-    public String createBoard(@AuthenticationPrincipal Users userDetails, @RequestBody BoardRequestDto boardRequestDto) {
+    public String createBoard(Users userDetails, BoardRequestDto boardRequestDto, MultipartFile file) {
         Users user = userService.findUserByAuthUser(userDetails);
-        Board board = new Board(boardRequestDto);
+
+        Board board = Board.builder()
+                .title(boardRequestDto.getTitle())
+                .body(boardRequestDto.getBody())
+                .template(boardRequestDto.getTemplate())
+                .img_url(s3Service.uploadFile(file))
+                .build();
 
         board.setUser(user);
         boardRepository.save(board);
@@ -67,10 +73,17 @@ public class BoardService {
 
     // PUT Board update
     @Transactional
-    public String update(Long boardId, BoardRequestDto boardRequestDto) {
+    public String update(Long boardId, BoardRequestDto boardRequestDto, MultipartFile file) {
         Board board = findBoardById(boardId);
+        // s3에서 기존 이미지 삭제
+        s3Service.deleteFile(board.getImg_url());
 
+        // 기존 viewCount 이전
         boardRequestDto.setViewCount(board.getViewCount());
+
+        // 새로운 file upload
+        boardRequestDto.setImg_url(s3Service.uploadFile(file));
+
         board.update(boardRequestDto);
 
         return "수정 완료";
@@ -78,7 +91,10 @@ public class BoardService {
 
     // DELETE Board
     public String deleteBoardById(Long boardId) {
-        findBoardById(boardId); //있나 없나 확인
+        Board board = findBoardById(boardId);
+        // s3에서 이미지 삭제
+        s3Service.deleteFile(board.getImg_url());
+
         boardRepository.deleteById(boardId);
 
         return "삭제 완료";
