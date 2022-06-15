@@ -6,6 +6,7 @@ import com.sparta.week02homework.domain.Users;
 import com.sparta.week02homework.dto.SignupUserDto;
 import com.sparta.week02homework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * Authentication(JWT Token) 으로 부터 User 정보 찾기
+     * @param userDetails
+     * @return Users
+     */
+    public Users findUserByAuthUser(Users userDetails) {
+        return userRepository.findByEmail(userDetails.getEmail()).orElseThrow(
+                () -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.")
+        );
+    }
 
 
     public Long join(SignupUserDto userDto) {
