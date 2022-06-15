@@ -4,10 +4,7 @@ package com.sparta.week02homework.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.week02homework.dto.BoardRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Builder
 public class Board extends Timestamped{
 
     @Id
@@ -71,6 +69,7 @@ public class Board extends Timestamped{
         this.body = boardRequestDto.getBody();
         this.viewCount = boardRequestDto.getViewCount();
         this.template = boardRequestDto.getTemplate();
+        this.img_url = boardRequestDto.getImg_url();
     }
 
     // FavoriteService에서 likeCount로 업데이트

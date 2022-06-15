@@ -23,6 +23,7 @@ public class BoardRequestDto {
     private int template;
     private int viewCount;
 
+    private String img_url;
 
 
 
