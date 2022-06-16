@@ -8,6 +8,7 @@ import com.sparta.week02homework.dto.BoardResponseDto;
 import com.sparta.week02homework.repository.BoardRepository;
 import com.sparta.week02homework.s3uploader.AwsS3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,9 +34,10 @@ public class BoardService {
      * Board CRUD 관련 Methods
      */
 
-    // Board 전체 GET
-    public List<BoardResponseDto> findBoards() {
-        List<Board> boards = boardRepository.findAll();
+    // Board 전체 목록 GET
+    // 최신 게시글 순
+    public List<BoardResponseDto> findBoards(String order) {
+        List<Board> boards = boardRepository.findAll(Sort.by(Sort.Direction.DESC, order));
         List<BoardResponseDto> boardResponseDto = new ArrayList<>();
         for (Board board : boards) {
             boardResponseDto.add(new BoardResponseDto(board));

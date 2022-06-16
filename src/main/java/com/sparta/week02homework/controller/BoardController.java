@@ -25,8 +25,13 @@ public class BoardController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/api/board")
+     /* order:
+     * 최신 순: createdAt
+     * 좋아요 순: likeCount
+     * View 순: viewCount
+     */
     public List<BoardResponseDto> getBoardList() {
-        return boardService.findBoards();
+        return boardService.findBoards("createdAt");
     }
 
     @GetMapping("/api/board/{boardId}")
