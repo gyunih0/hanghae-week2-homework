@@ -15,10 +15,20 @@ public class SignupUserDto {
     private String email;
 
     @NotEmpty(message = "비밀번호을 입력해주세요.")
-    @Min(value = 4, message = "비밀번호는 최소 4자 이상이어야합니다.") // Min은 숫자만 받는다
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{4,16}",
+            message = "비밀번호는 4~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;
 
     @NotEmpty(message = "닉네임을 입력해주세요.")
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-zA-Z])[0-9a-zA-Z]{3,20}$", message = "닉네임은 최소 3자 이상, 알파벳 대소문자와, 숫자가 포함되어야 합니다.")
+    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", message = "닉네임은 특수문자를 제외한 2~10자리여야 합니다.")
     private String username;
+
+    @AssertTrue(message = "비밀번호안에 이메일값이 포함되어 있습니다.") // return true면 포함X false면 포함
+    public boolean isEmailInPassword() {
+        if (this.email == null || this.password == null){
+            throw new IllegalArgumentException("요청 값이 없습니다");
+        }
+        return !this.password.contains(this.email.split("@")[0]);
+    }
+
 }
