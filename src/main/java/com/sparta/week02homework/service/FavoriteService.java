@@ -4,11 +4,8 @@ import com.sparta.week02homework.domain.Board;
 import com.sparta.week02homework.domain.Favorite;
 import com.sparta.week02homework.domain.FavoriteStatus;
 import com.sparta.week02homework.domain.Users;
-import com.sparta.week02homework.repository.BoardRepository;
 import com.sparta.week02homework.repository.FavoriteRepository;
-import com.sparta.week02homework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

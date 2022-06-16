@@ -2,7 +2,7 @@ package com.sparta.week02homework.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.sparta.week02homework.dto.FavoriteDto;
+
 import lombok.*;
 
 import javax.persistence.*;
