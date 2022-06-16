@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,7 +33,6 @@ public class UserService {
         );
     }
     public void loginCheck(Users userDetails) {
-        System.out.println(userDetails);
         if(userDetails == null){
             throw new IllegalArgumentException("로그인이 필요합니다");
         }
@@ -69,13 +69,17 @@ public class UserService {
      * @param user
      * @return
      */
-    public String login(Map<String, String> user) {
+    public Map<String, String> login(Map<String, String> user) {
+        Map<String, String> token = new HashMap<>();
+
         Users member = userRepository.findByEmail(user.get("email"))
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
         if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
-        return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+
+        token.put("Access-Token", jwtTokenProvider.createToken(member.getUsername(), member.getRoles()));
+        return token;
     }
 
 }
