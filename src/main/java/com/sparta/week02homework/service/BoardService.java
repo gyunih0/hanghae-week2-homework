@@ -47,15 +47,14 @@ public class BoardService {
     @Transactional
     public BoardResponseDto findOneBoard(Long boardId) {
         Board board = findBoardById(boardId);
-
-        BoardRequestDto boardRequestDto = new BoardRequestDto(board); // viewCount ++
-        board.update(boardRequestDto);
+        board.updateViewCount(); // viewCount ++
 
         return new BoardResponseDto(board);
     }
 
     // POST new Board
     public String createBoard(Users userDetails, BoardRequestDto boardRequestDto, MultipartFile file) {
+
         Users user = userService.findUserByAuthUser(userDetails);
 
         Board board = Board.builder()
@@ -107,11 +106,9 @@ public class BoardService {
 
     @Transactional
     public int updateLikeCount(Board board, int likeCount) {
-        board.update(likeCount);
+        board.updateLikeCount(likeCount);
         return likeCount;
     }
-
-
 
 
 }

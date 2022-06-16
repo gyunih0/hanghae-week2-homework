@@ -37,7 +37,8 @@ public class BoardController {
     @PostMapping("/api/board")
     public String postBoard(@AuthenticationPrincipal Users userDetails,
                             @RequestParam("board") String board,
-                            @RequestPart MultipartFile file) throws JsonProcessingException{
+                            @RequestPart(required = false) MultipartFile file) throws JsonProcessingException{
+
         userService.loginCheck(userDetails);
 
         BoardRequestDto boardRequestDto = objectMapper.readValue(board, BoardRequestDto.class);
@@ -57,7 +58,7 @@ public class BoardController {
     public String updateBoard(@PathVariable Long boardId,
                               @AuthenticationPrincipal Users userDetails,
                               @RequestParam("board") String board,
-                              @RequestPart MultipartFile file) throws JsonProcessingException {
+                              @RequestPart(required = false) MultipartFile file) throws JsonProcessingException {
         userService.loginCheck(userDetails);
 
         BoardRequestDto boardRequestDto = objectMapper.readValue(board, BoardRequestDto.class);
