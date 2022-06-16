@@ -73,10 +73,14 @@ public class Board extends Timestamped{
     }
 
     // FavoriteService에서 likeCount로 업데이트
-    public void update(int likeCount) {
+    public void updateLikeCount(int likeCount) {
         this.likeCount = likeCount;
     }
 
+    // ViewCount ++
+    public void updateViewCount() {
+        this.viewCount = this.viewCount + 1;
+    }
 
     /**
      * User 연관관계 Method
