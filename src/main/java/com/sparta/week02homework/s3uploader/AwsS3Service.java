@@ -30,6 +30,10 @@ public class AwsS3Service {
 
     public String uploadFile(MultipartFile multipartFile) {
 
+        if (multipartFile == null) {
+            return "";
+        }
+
         String fileName = createFileName(multipartFile.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
@@ -47,8 +51,10 @@ public class AwsS3Service {
 
 
     public void deleteFile(String imgUrl) {
-        String fileName = imgUrl.split("/")[3];
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        if (!imgUrl.equals("")) {
+            String fileName = imgUrl.split("/")[3];
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        }
     }
 
 
