@@ -67,5 +67,6 @@
 - AwsS3Service.java에서 multipartFile이 null일때 imgUrl을 빈 스트링으로 만들어서 해결.
 
 3. Jasypt Encryption 오류(미해결)
+- [#11](https://github.com/gyunih0/hanghae-week2-homework/issues/11)
 - 암호화 과정에서 프로그램 실행마다 결과값이 다르게 나온 것이 문제라고 생각하였으나 암호화된 결과를 고정하여도 Aws에 key, SecretKey가 넘어가는 과정에서 불일치 발생.
 - 현재는 properties를 분리 하여 깃허브에는 노출 되지 않도록 설정하였다.
